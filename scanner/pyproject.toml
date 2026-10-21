@@ -1,0 +1,56 @@
+# How to build the package
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+# Package info
+[project]
+name = "cloudguard-scanner"
+version = "0.1.0"
+description = "Scans AWS accounts for security misconfigurations"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [{ name = "Nithesh" }]
+
+# Packages needed to RUN the scanner
+dependencies = [
+    "boto3>=1.35",
+]
+
+# Packages needed only for DEVELOPMENT (tests, linting, type checks)
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "moto[ec2,iam,s3]>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "boto3-stubs[ec2,iam,s3,s3control]>=1.35",
+]
+
+# Turns `cloudguard` into a terminal command that calls main() in cli.py
+[project.scripts]
+cloudguard = "cloudguard.cli:main"
+
+# Tell hatchling where the code lives (src layout)
+[tool.hatch.build.targets.wheel]
+packages = ["src/cloudguard"]
+
+# pytest
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+# ruff (linter)
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+# mypy (type checker) 
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
